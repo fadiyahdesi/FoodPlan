@@ -1,0 +1,29 @@
+{% macro navbar() %}
+<nav class="main-header navbar navbar-expand-md navbar-light navbar-white fixed-top">
+    <div class="container justify-content-between">
+        <a href="../../index3.html" class="navbar-brand">
+            <span class="brand-text text-succes" style="font-weight: bold;">FOOD<strong style="color: rgb(15, 134, 85); font-weight: bold;">Plan</strong></span>
+        </a>
+
+        <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{{ url_for('product_list') }}" class="nav-link">Beranda</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('reseps') }}" class="nav-link">Resep</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('login') }}" class="nav-link">Admin</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endmacro %}

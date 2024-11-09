@@ -1,0 +1,182 @@
+{% extends '/layout/app.html' %}
+
+{% block title %}Product List{% endblock %}
+
+{% block content %}
+<div class="row pt-5">
+    <!-- Teks pada bagian kiri -->
+    <div class="hero-section">
+        <!-- Teks pada bagian kiri -->
+        <div class="text-section">
+            <h1 class="hero-title">Solusi <span class="highlight">Satu Langkah</span> untuk semua <span
+                    class="highlight">kebutuhan diet Anda.</span></h1>
+            <div class="input-group mt-3" style="max-width: 400px;">
+                <input type="text" class="form-control" placeholder="Search your product">
+                <button class="btn btn-outline-secondary" style="background-color: white;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Gambar pada bagian kanan -->
+        <img src="{{ url_for('static', filename='assets/images/depan.png') }}" alt="Depan Image" class="hero-image">
+    </div>
+
+    <!-- Features Section -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Fitur yang Kami Sediakan</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-utensils fa-2x mb-3"></i>
+                    <h5>Rekomendasi Masakan</h5>
+                    <p>Kami memberikan rekomendasi makanan sesuai dengan kebutuhan kalori Anda.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-comments fa-2x mb-3"></i>
+                    <h5>Chatbot Interaktif</h5>
+                    <p>Kami memberikan rekomendasi makanan sesuai dengan kebutuhan kalori Anda.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>Informasi Diet</h5>
+                    <p>Informasi lengkap mengenai diet yang dapat membantu Anda mencapai tujuan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section bg-light" id="gallery-section">
+        <div class="container">
+            <h2 class="text-center">Gallery Resep Masakan</h2>
+            <div class="d-flex justify-content-center mt-4 mb-3">
+                <a href="{{ url_for('categoryproduk', category='semua') }}#gallery-section" class="btn btn-outline-secondary mx-1">Semua</a>
+                <a href="{{ url_for('categoryproduk', category='dietnormal') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Normal</a>
+                <a href="{{ url_for('categoryproduk', category='dietBerat') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Berat Badan</a>
+                <a href="{{ url_for('categoryproduk', category='dietSport') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Sport</a>
+                <a href="{{ url_for('categoryproduk', category='dietKhusus') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Khusus</a>
+                <a href="{{ url_for('categoryproduk', category='diet2Nyawa') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet 2 Nyawa</a>
+            </div>
+            <div class="row g-4">
+                <!-- Gallery Items -->
+                {% for product in products %}
+                <div class="col-md-3">
+                    <div class="card">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" class="card-img-top" alt="{{ product.title }}"
+                            style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <img src="../../static/assets/images/brokoli cap.webp" class="card-img-top"
+                            alt="No Image Available" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.title if product.title else 'Title not found' }}</h5>
+                            <p class="card-text">{{ product.description if product.description else 'Description not
+                                found' }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-primary">Lihat Semua</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Topics Section -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Topik Utama</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="topic-card">
+                    <h5>Diet Normal</h5>
+                    <p>Diet normal adalah pola makan yang bertujuan untuk memenuhi kebutuhan nutrisi harian.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="topic-card">
+                    <h5>Diet Berat Badan</h5>
+                    <p>Diet ini bertujuan untuk menurunkan berat badan.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="topic-card">
+                    <h5>Diet Sport</h5>
+                    <p>Diet ini cocok bagi yang aktif berolahraga untuk memenuhi kebutuhan kalori.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Team Member</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="team-member">
+                    <img src="../../static/assets/img/team1.png" alt="Team Member">
+                    <h6 class="mt-2">Berliani Risqi Dwi Saputri</h6>
+                    <p>UI/UX Designer</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-member">
+                    <img src="../../static/assets/img/team2.png" alt="Team Member">
+                    <h6 class="mt-2">Fadiyah Desi Asmawati</h6>
+                    <p>UI/UX Designer</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-member">
+                    <img src="../../static/assets/img/team3.png" alt="Team Member">
+                    <h6 class="mt-2">Asih Rahmawati</h6>
+                    <p>UI/UX Designer</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-member">
+                    <img src="../../static/assets/img/team4.png" alt="Team Member">
+                    <h6 class="mt-2">Ilham Hatta Manggala</h6>
+                    <p>UI/UX Designer</p>
+                </div>
+            </div>
+            <!-- Duplicate this div for each team member -->
+        </div>
+    </section>
+
+    <section class="container">
+        <!-- Floating Chatbot Icon -->
+        <div id="chatbot" class="floating-chatbot">
+            <button type="button" class="btn btn-primary rounded-circle" onclick="toggleChatbot()">
+                <i class="fas fa-comment-dots fa-lg"></i>
+            </button>
+        </div>
+
+        <!-- Chatbot Popup -->
+        <div id="chatbot-popup" class="chatbot-popup" style="display: none;">
+            <div class="chatbot-header d-flex justify-content-between align-items-center p-2">
+                <span><i class="fas fa-robot me-2"></i>Chatbot</span>
+                <button type="button" class="btn-close btn-sm text-white" onclick="toggleChatbot()"
+                    aria-label="Close"></button>
+            </div>
+            <div class="chatbot-body p-3">
+                <div class="chatbot-messages" id="chatbot-messages">
+                    <p class="bot-message">Halo! Ada yang bisa saya bantu?</p>
+                </div>
+                <div class="input-group mt-3">
+                    <input type="text" id="chatbot-input" class="form-control" placeholder="Ketik pesan...">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

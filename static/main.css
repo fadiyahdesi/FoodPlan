@@ -1,0 +1,221 @@
+body,
+html {
+    overflow-x: hidden;
+}
+
+/* Pastikan .wrapper tidak melebihi lebar viewport */
+.wrapper {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #5aab5a;
+    gap: 20px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    line-height: 1.2;
+}
+
+.highlight {
+    color: #fff; /* Warna hijau sebagai highlight */
+    font-weight: bold;
+}
+
+.text-section {
+    max-width: 400px;
+}
+
+.hero-image {
+    max-width: 450px;
+    margin-left: 60px; /* Menambahkan margin ke kiri untuk memberi jarak dengan teks */
+}
+
+.feature-card,
+.gallery-item,
+.topic-card,
+.team-member {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-section {
+    padding: 40px 0;
+}
+
+.team-member img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.team-member img {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+    width: 100%;
+    object-fit: cover;
+}
+
+.team-member img.active {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.team-member img.inactive {
+    opacity: 0.6;
+    transform: scale(0.8);
+}
+
+.team-member h6, .team-member p {
+    text-align: center;
+}
+
+.team-member img:hover {
+    opacity: 1;
+}
+
+
+/* Floating Chatbot Icon */
+.floating-chatbot {
+    background-color: #445B4B;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.floating-chatbot button {
+    background-color: #445B4B;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    border: #445B4B;
+}
+
+.btn-primary{
+    background-color: #445B4B;
+    border: #445B4B;
+}
+
+/* Chatbot Popup */
+.chatbot-popup {
+    position: fixed;
+    bottom: 90px;
+    right: 10px;
+    width: 300px;
+    max-height: 500px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    z-index: 1001;
+}
+
+.chatbot-header {
+    background-color: #445B4B;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.chatbot-body {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.user-message {
+    text-align: right;
+    background-color: #445B4B;
+    color: white;
+    padding: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+    align-self: flex-end;
+}
+
+.bot-message {
+    text-align: left;
+    background-color: #e9ecef;
+    color: black;
+    padding: 8px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 70%;
+    align-self: flex-start;
+}
+
+.chatbot-messages {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.btn-close{
+    filter: invert(2);
+}
+
+
+/* Input and Send Button */
+.input-group .form-control {
+    border-radius: 20px 0 0 20px;
+}
+
+.input-group .btn-primary {
+    border-radius: 0 20px 20px 0;
+}
+
+/* Card */
+.card {
+    height: 100%; /* Membuat card menyesuaikan tinggi kolom */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex: 1; /* Agar card body mengisi ruang yang tersedia */
+    min-height: 150px; /* Sesuaikan berdasarkan kebutuhan konten */
+    overflow: hidden; /* Menjaga konten dalam batas card */
+}
+
+.card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: medium;
+    font-weight: bold;
+    white-space: normal;
+    margin-bottom: 0.5rem;
+    overflow: visible;
+}
+
+.card-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* Batasi ke 3 baris */
+    line-height: 1.5rem; /* Sesuaikan tinggi baris */
+    max-height: calc(1.5rem * 3); /* Menjaga tinggi maksimum untuk 3 baris */
+    margin-bottom: 1rem;
+}
+

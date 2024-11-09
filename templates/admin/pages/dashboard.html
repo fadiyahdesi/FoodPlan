@@ -1,0 +1,67 @@
+{% extends '/admin/app.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                {% if admins %}
+                    {% for admin in admins %}
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon elevation-1" style="border-radius: 10px;">
+                                    {% if admin.avatar %}
+                                        <img src="data:{{ admin.avatar_format }};base64,{{ admin.avatar_data }}" alt="Avatar"
+                                             style="width: 100%; border-radius: 10px;">
+                                    {% else %}
+                                        <i class="fas fa-cog"></i>
+                                    {% endif %}
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Admin {{ loop.index }}</span>
+                                    <span class="info-box-number" style="font-size: 12px;">
+                                        {{ admin.nama }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Tidak ada admin untuk ditampilkan.</p>
+                {% endif %}
+            </div>            
+        </div>
+    </section>
+    <section class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="text-center">
+                                    <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                                </p>
+
+                                <div class="chart">
+                                    <!-- Sales Chart Canvas -->
+                                    <canvas id="productChart" height="120" style="height: 180px;"></canvas>
+                                </div>
+                                <!-- /.chart-responsive -->
+                            </div>
+                            <!-- /.col -->
+
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </section>
+</div>
+{% endblock %}

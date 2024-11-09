@@ -1,0 +1,38 @@
+{% extends '/layout/app.html' %}
+
+{% block title %}resep{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Resep Masakan</h1>
+    
+    <!-- Gallery Section -->
+    <section class="gallery-section bg-light">
+        <div class="container">
+            <!-- Filter Buttons -->
+            <div class="d-flex justify-content-center mt-4 mb-3">
+                <button class="btn btn-outline-secondary mx-1 filter-btn active" data-filter="all">Semua</button>
+                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="normal">Diet Normal</button>
+                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="weight-loss">Diet Berat Badan</button>
+                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="sport">Diet Sport</button>
+                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="pregnancy">Diet Ibu Hamil</button>
+                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="disease">Diet Penyakit</button>
+            </div>
+
+            <!-- Gallery Items -->
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-md-3 filter-item" data-category="{{ product.category|default('all') }}">
+                    <div class="card h-100">
+                        <img src="{{ product.image_src or '../../static/assets/images/brokoli cap.webp' }}" class="card-img-top" alt="{{ product.title }}"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.title or 'Title not found' }}</h5>
+                            <p class="card-text">{{ product.description or 'Description not found' }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+</div>
+{% endblock %}

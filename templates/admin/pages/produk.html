@@ -1,0 +1,70 @@
+{% extends '/admin/app.html' %}
+
+{% block title %}Produk{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <form action="{{ url_for('product_admin') }}" method="get">
+                        <label for="category-select">Pilih Kategori:</label>
+                        <select id="category-select" name="category" class="form-control" onchange="this.form.submit()">
+                            <option value="">Semua Kategori</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id|string==selected_category|string
+                                %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('tambah_produk') }}" class="btn btn-success">Tambah Produk</a>
+                </div>
+            </div>
+
+            <!-- Produk Cards -->
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4 d-flex">
+                    <div class="card flex-grow-1" style="max-width: 500px; max-height: 300px;">
+                        <div class="row g-0">
+                            <!-- Bagian gambar -->
+                            <div class="col-4">
+                                {% if product.image_src %}
+                                <img src="{{ product.image_src }}" class="img-fluid rounded-start img-fixed" alt="{{ product.title }}">
+                                {% endif %}
+                            </div>
+                            <!-- Bagian konten -->
+                            <div class="col-6">
+                                <div class="card-body">
+                                    <h5 class="card-title font-weight-bold">{{ product.title }}</h5>
+                                    <p class="card-text">{{ product.description }}</p>
+                                    <p class="card-text text-muted"><small>{{ product.created_at }}</small></p>
+                                </div>
+                            </div>
+                            <!-- Bagian tombol aksi -->
+                            <div class="col-2 d-flex align-items-center">
+                                <div class="button-group">
+                                    <a href="{{ url_for('edit_produk', id=product.id) }}" class="btn btn-primary btn-sm mb-2" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ url_for('hapus_produk', id=product.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>            
+        </div>
+    </section>
+</div>
+{% endblock %}

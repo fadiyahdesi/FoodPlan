@@ -1,0 +1,55 @@
+{% extends '/admin/app.html' %}
+{% block title %}Tambah Produk{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <h2>Create New Product</h2>
+            <form action="{{ url_for('tambah_produk') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" class="form-control" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ingredients">Ingredients</label>
+                    <textarea name="ingredients" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="steps">Steps</label>
+                    <textarea name="steps" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select name="category_id" class="form-control" required>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="carbohidrat">Carbohydrates (g)</label>
+                    <input type="number" name="carbohidrat" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="protein">Protein (g)</label>
+                    <input type="number" name="protein" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="fat">Fat (g)</label>
+                    <input type="number" name="fat" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <input type="file" name="image" class="form-control-file" required>
+                </div>
+                <button type="submit" class="btn btn-success">Create Product</button>
+            </form>            
+        </div>
+    </div>
+</div>
+{% endblock %}
