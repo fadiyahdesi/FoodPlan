@@ -3,6 +3,15 @@ function toggleChatbot() {
     chatbotPopup.style.display = chatbotPopup.style.display === "none" || chatbotPopup.style.display === "" ? "block" : "none";
 }
 
+// Mengimpor jQuery dan Bootstrap (untuk hamburger)
+const scriptJQuery = document.createElement("script");
+scriptJQuery.src = "https://code.jquery.com/jquery-3.5.1.min.js";
+document.head.appendChild(scriptJQuery);
+
+const scriptBootstrap = document.createElement("script");
+scriptBootstrap.src = "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js";
+document.head.appendChild(scriptBootstrap);
+
 function sendMessage() {
     var message = document.getElementById("chatbot-input").value;
     if (message.trim() !== "") {

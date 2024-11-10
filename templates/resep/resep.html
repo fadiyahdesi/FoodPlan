@@ -1,38 +1,45 @@
 {% extends '/layout/app.html' %}
 
-{% block title %}resep{% endblock %}
+{% block title %}Resep{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <h1 class="text-center mb-4">Resep Masakan</h1>
-    
-    <!-- Gallery Section -->
-    <section class="gallery-section bg-light">
+    <!-- Gallery Section2 -->
+    <section class="gallery-section2 bg-light" id="gallery-section2">
         <div class="container">
-            <!-- Filter Buttons -->
             <div class="d-flex justify-content-center mt-4 mb-3">
-                <button class="btn btn-outline-secondary mx-1 filter-btn active" data-filter="all">Semua</button>
-                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="normal">Diet Normal</button>
-                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="weight-loss">Diet Berat Badan</button>
-                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="sport">Diet Sport</button>
-                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="pregnancy">Diet Ibu Hamil</button>
-                <button class="btn btn-outline-secondary mx-1 filter-btn" data-filter="disease">Diet Penyakit</button>
+                <a href="{{ url_for('categoryresep', category='semua') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Semua</a>
+                <a href="{{ url_for('categoryresep', category='dietnormal') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Diet Normal</a>
+                <a href="{{ url_for('categoryresep', category='dietBerat') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Diet Berat Badan</a>
+                <a href="{{ url_for('categoryresep', category='dietSport') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Diet Sport</a>
+                <a href="{{ url_for('categoryresep', category='dietKhusus') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Diet Khusus</a>
+                <a href="{{ url_for('categoryresep', category='diet2Nyawa') }}#gallery-section2" class="btn btn-outline-secondary mx-1">Diet 2 Nyawa</a>
             </div>
-
-            <!-- Gallery Items -->
             <div class="row g-4">
-                {% for product in products %}
-                <div class="col-md-3 filter-item" data-category="{{ product.category|default('all') }}">
-                    <div class="card h-100">
-                        <img src="{{ product.image_src or '../../static/assets/images/brokoli cap.webp' }}" class="card-img-top" alt="{{ product.title }}"
+                <!-- Gallery Items -->
+                {% for product in reseps %}
+                <div class="col-md-3">
+                    <div class="card">
+                        {% if product.image_src %}
+                        <img src="{{ product.image_src }}" class="card-img-top" alt="{{ product.title }}"
                             style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <img src="../../static/assets/images/brokoli cap.webp" class="card-img-top"
+                            alt="No Image Available" style="height: 200px; object-fit: cover;">
+                        {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ product.title or 'Title not found' }}</h5>
-                            <p class="card-text">{{ product.description or 'Description not found' }}</p>
+                            <h5 class="card-title">{{ product.title if product.title else 'Title not found' }}</h5>
+                            <p class="card-text">{{ product.description if product.description else 'Description not
+                                found' }}</p>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+        </div>
+    </section>
 </div>
+
+<script src="{{ url_for('static', filename='resep.js') }}"></script>
 {% endblock %}

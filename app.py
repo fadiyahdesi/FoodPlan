@@ -6,6 +6,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from controllers.ProductController import products
 from controllers.ChatController import ChatController
 from sqlalchemy import func
+from controllers.LoginController import loginMobile
 from controllers.AdminController import UserList, create_product, dashboard, delete_product, loginAdmin, produkAdmin, update_product
 from controllers.ResepController import resep
 from controllers.AdminController import add_user, edit_user, delete_user
@@ -23,6 +24,10 @@ app.secret_key = 'foodplan_123'
 @app.get("/")
 def product_list():
     return products()
+
+@app.route('/login', methods=['POST'])
+def login_page():
+    return loginMobile()
 
 # Define route to get chatbot response
 @app.route('/get_response', methods=['POST'])
@@ -87,7 +92,7 @@ def ListUser():
 def reseps():
     return resep()
 
-@app.get("/produk-page")
+@app.route("/produk-page", methods=['GET'])
 def produk_page():
     return prodMobile()
 
@@ -157,5 +162,79 @@ def categoryproduk():
     # Render template dengan data produk dan gambar
     return render_template('user/index.html', products=products_with_images)
 
+@app.route('/categoryresep')
+def categoryresep():
+    # Ambil kategori yang dipilih dari request (default ke 'semua')
+    selected_category = request.args.get('category', 'semua')
+
+    # Ambil produk sesuai kategori yang dipilih
+    if selected_category == 'dietnormal':
+        products = db.session.execute(db.select(Product).filter(Product.category_id == 1)).scalars().all()
+    elif selected_category == 'dietBerat':
+        products = db.session.execute(db.select(Product).filter(Product.category_id == 2)).scalars().all()
+    elif selected_category == 'dietSport':
+        products = db.session.execute(db.select(Product).filter(Product.category_id == 3)).scalars().all()
+    elif selected_category == 'dietKhusus':
+        products = db.session.execute(db.select(Product).filter(Product.category_id == 4)).scalars().all()
+    elif selected_category == 'diet2Nyawa':
+        products = db.session.execute(db.select(Product).filter(Product.category_id == 5)).scalars().all()
+    else:
+        products = db.session.execute(db.select(Product)).scalars().all()
+
+    # Tambahkan pemrosesan gambar untuk setiap produk
+    products_with_images = []
+    for product in products:
+        if product.images:
+            # Deteksi format gambar
+            image_format = detect_image_format(product.images)
+            # Encode gambar ke base64
+            image_data = base64.b64encode(product.images).decode('utf-8')
+            # Set image_src dengan format yang terdeteksi
+            image_src = f"data:image/{image_format};base64,{image_data}"
+        else:
+            image_src = None  # Jika gambar tidak ada, atur ke None
+
+        # Simpan informasi produk dan gambar
+        products_with_images.append({
+            'title': product.title,
+            'description': product.description,
+            'image_src': image_src
+        })
+
+    # Render template dengan data produk dan gambar
+    return render_template('resep/resep.html', reseps=products_with_images)
+
+# Detail Resep
+@app.route('/resep/<int:id>')
+def detail_resep(id):
+    # Fetch the resep by ID
+    product = db.session.query(Product).filter_by(id=id).first()
+    
+    if not product:
+        return "resep not found", 404
+
+    # Process image if available
+    image_src = None
+    if product.images:
+        image_format = detect_image_format(product.images)
+        image_data = base64.b64encode(product.images).decode('utf-8')
+        image_src = f"data:image/{image_format};base64,{image_data}"
+
+    # Pass all required details to the template
+    detail_reseps = {
+        'title': product.title,
+        'description': product.description,
+        'image_src': image_src,
+        'ingredients': product.ingredients,
+        'steps': product.steps,
+        'carbohydrates': product.carbohydrates,
+        'protein': product.protein,
+        'fat': product.fat,
+        'category_id': product.category_id,
+    }
+
+    return render_template('resep/detail_resep.html', resep=detail_reseps)
+
 if __name__ == "__main__":
     app.run(debug=True)
+    

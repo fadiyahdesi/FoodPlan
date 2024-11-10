@@ -1,0 +1,36 @@
+{% extends '/layout/app.html' %}
+
+{% block title %}{{ resep.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">{{ resep.title }}</h1>
+    
+    {% if resep.image_src %}
+    <div class="text-center">
+        <img src="{{ resep.image_src }}" class="img-fluid" alt="{{ resep.title }}" style="max-height: 400px;">
+    </div>
+    {% endif %}
+
+    <p class="text-muted text-center">{{ resep.description }}</p>
+
+    <h4>Ingredients</h4>
+    <ul>
+        {% for ingredient in resep.ingredients %}
+        <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Steps</h4>
+    <ol>
+        {% for step in resep.steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+    </ol>
+
+    <h4>Nutritional Information</h4>
+    <p>Carbohydrates: {{ resep.carbohydrates }} g</p>
+    <p>Protein: {{ resep.protein }} g</p>
+    <p>Fat: {{ resep.fat }} g</p>
+</div>
+{% endblock %}
