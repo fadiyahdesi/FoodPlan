@@ -33,12 +33,13 @@ def initialize_vectorstore(chunked_texts, embeddings):
 
 def create_rag_chain(retriever, llm):
     system_prompt = (
-        "Anda adalah asisten untuk tugas menjawab pertanyaan. "
-        "Gunakan konteks yang diambil untuk menjawab "
-        "Menjawab menggunakkan bahasa indonesia "
-        "Jika Anda tidak ada jawaban pada konteks, katakan saja saya tidak tahu dan berikan jawaban yang sesuai "
-        ". Gunakan maksimal tiga kalimat dan pertahankan "
-        "jawaban singkat.\n\n"
+        "Anda memiliki peran sebagai asisten untuk menjawab berbagai pertanyaan. "
+        "Jawaban yang diberikan harus berdasarkan konteks yang tersedia. "
+        "Pastikan untuk menggunakan bahasa Indonesia dalam setiap jawaban. "
+        "Jika konteks tidak mencakup informasi yang diperlukan, Anda dapat mengatakan 'saya tidak tahu'. "
+        "Selanjutnya, berikan jawaban yang relevan dan sesuai dengan pertanyaan. "
+        "Jawaban yang diberikan harus singkat dan jelas. "
+        "Usahakan untuk membatasi jawaban hingga tiga kalimat agar tetap ringkas.\n\n"
         "{context}"
     )
     prompt = ChatPromptTemplate.from_messages(

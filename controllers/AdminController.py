@@ -313,20 +313,32 @@ def list_users():
 # Menambahkan user baru
 def add_user():
     if request.method == 'POST':
+        # Ambil data dari form
         nama = request.form['nama']
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
         role_id = request.form['role_id']
-        # Logic to save user to the database
+
+        # Hash password
         hashed_password = hashlib.md5(password.encode()).hexdigest()
-        new_user = User(nama=nama, username=username, email=email, password=hashed_password, role_id=role_id)
+
+        # Buat user baru tanpa menyebutkan updated_at
+        new_user = User(
+            nama=nama,
+            username=username,
+            email=email,
+            password=hashed_password,
+            role_id=role_id
+        )
+
+        # Simpan ke database
         db.session.add(new_user)
         db.session.commit()
         flash('User berhasil ditambahkan!', 'success')
-        return redirect(url_for('list_users_route'))  # Redirect ke halaman list user setelah sukses
-    
-    # Menampilkan form tambah user
+        return redirect(url_for('ListUser'))
+
+    # Tampilkan form tambah user
     roles = Role.query.all()
     return render_template('admin/pages/crudUser/add_user.html', roles=roles)
 
@@ -346,7 +358,7 @@ def edit_user(user_id):
         
         db.session.commit()
         flash('User berhasil diupdate!', 'success')
-        return redirect(url_for('list_users_route'))
+        return redirect(url_for('ListUser'))
 
     roles = Role.query.all()
     return render_template('admin/pages/crudUser/edit_user.html', user=user, roles=roles)
@@ -357,4 +369,4 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     flash('User berhasil dihapus!', 'success')
-    return redirect(url_for('list_users_route'))
+    return redirect(url_for('ListUser'))

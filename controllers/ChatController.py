@@ -38,7 +38,7 @@ class ChatController:
         # Tokenization by splitting on whitespace and punctuation
         return re.findall(r'\w+', text.lower())
 
-    def calculate_bleu(self, reference, candidate, max_n=4):
+    def calculate_bleu(self, reference, candidate, max_n=7):
         ref_tokens = self.simple_tokenize(reference)
         cand_tokens = self.simple_tokenize(candidate)
 

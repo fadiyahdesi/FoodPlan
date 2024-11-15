@@ -27,9 +27,9 @@ tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
 
 # Sampel kalimat
 sentences = [
-    "Fasilitas apa saja yang ada di Sindang Kemadu?",
-    "Dapatkah Anda memberikan detail tentang Lembah Rembulan?",
-    "Sejarah Sawah Batu bagaimana?"
+    "Apa itu pengertian diet?",
+    "Dapatkah anda menjelaskan berapa jenis diet?",
+    "Diet yang cocok untuk seorang atlet?"
 ]
 
 print("Before and After Preprocessing:")

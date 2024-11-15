@@ -37,3 +37,70 @@
     font-size: 0.9em;
     color: #666;
 }
+
+/* Mengatur warna latar belakang dan tata letak login box */
+body.login-page {
+    background-color: #f4f6f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Mengatur kotak login */
+.login-box {
+    width: 400px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Mengubah warna dan tata letak header */
+.card-header {
+    background-color: #445B4B;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Menambah logo di bagian header */
+.card-header img {
+    width: 50px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Mengatur warna teks dan input */
+.login-box-msg {
+    font-size: 1.1rem;
+    color: #445B4B;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.form-control {
+    border-radius: 5px;
+    box-shadow: none;
+}
+
+/* Warna tombol login */
+.btn-primary {
+    background-color: #445B4B;
+    border-color: #445B4B;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #3a4e41;
+    border-color: #3a4e41;
+}
+
+/* Link pada halaman login */
+.text-center a {
+    color: #ffffff;
+}
+
+.text-center a:hover {
+    color:rgb(53, 209, 53);
+}

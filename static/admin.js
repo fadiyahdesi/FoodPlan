@@ -89,5 +89,10 @@ function getRandomColor() {
 // Memanggil fungsi untuk membuat chart saat halaman dimuat
 createChart();
 
+// Contoh JavaScript sederhana
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Login page loaded");
+    // Tambahkan skrip tambahan di sini
+});
 
 
