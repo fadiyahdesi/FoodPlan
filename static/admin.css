@@ -104,3 +104,13 @@ body.login-page {
 .text-center a:hover {
     color:rgb(53, 209, 53);
 }
+
+/* Sidebar */
+.brand-text{
+    color: #83f0a9;
+    transition: background-color 0.3s ease;
+}
+ .brand-text:hover{
+    color: beige;
+ }
+

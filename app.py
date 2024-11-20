@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, session, redirect, url_for
 from flask_cors import CORS
 from controllers.mobile.Produk import prodMobile
 from models.connectDB import db, Product, Role, User  # Import db from models.py, but after db is defined
@@ -37,6 +37,11 @@ def get_chat_response():
 @app.route('/admin', methods=['GET', 'POST'])
 def login():
     return loginAdmin()
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/admin/dashboard')
 def dashboardAdmin():
