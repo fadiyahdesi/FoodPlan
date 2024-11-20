@@ -1,16 +1,20 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from controllers.mobile.Produk import prodMobile
+from controllers.mobile.DeteksiController import predict
 from models.connectDB import db, Product, Role, User  # Import db from models.py, but after db is defined
 from langchain_community.document_loaders import PyPDFLoader
 from controllers.ProductController import products
 from controllers.ChatController import ChatController
 from sqlalchemy import func
+from sqlalchemy.orm import load_only
 from controllers.LoginController import loginMobile
 from controllers.AdminController import UserList, create_product, dashboard, delete_product, loginAdmin, produkAdmin, update_product
 from controllers.ResepController import resep
 from controllers.AdminController import add_user, edit_user, delete_user
 import base64  # <-- Tambahkan baris ini untuk mengimpor base64
+import logging
+
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +24,9 @@ db.init_app(app)  # Initialize the SQLAlchemy instance with the app
 
 chat_controller = ChatController(app, api_key="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", pdf_path="data/chatbot.pdf")
 app.secret_key = 'foodplan_123'
+# Konfigurasi logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 @app.get("/")
 def product_list():
@@ -234,6 +241,65 @@ def detail_resep(id):
     }
 
     return render_template('resep/detail_resep.html', resep=detail_reseps)
+
+@app.route('/predict', methods=['POST'])
+def predict_endpoint():
+    try:
+        logger.info(f"Request received: {request.method} {request.url}")
+        
+        # Cek apakah file ada dalam request
+        if 'file' not in request.files:
+            logger.error("No file part in the request.")
+            return jsonify({'status': 'error', 'message': 'No file part in the request.'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            logger.error("No selected file.")
+            return jsonify({'status': 'error', 'message': 'No selected file.'}), 400
+
+        logger.info(f"File received: {file.filename}")
+        
+        # Panggil fungsi prediksi
+        result = predict(file)  # Fungsi predict
+        logger.info(f"Prediction result: {result}")
+
+        # Jika ada error di predict
+        if result.startswith("Error"):
+            return jsonify({'status': 'error', 'message': result}), 400
+
+        # Query produk yang cocok, tanpa kolom created_at dan updated_at
+        matched_products = Product.query.options(
+            load_only(Product.id, Product.title, Product.ingredients, Product.steps, 
+                      Product.carbohidrat, Product.protein, Product.fat, Product.description, 
+                      Product.images, Product.category_id)
+        ).filter(Product.ingredients.like(f"%{result}%")).all()
+
+        if not matched_products:
+            return jsonify({'status': 'success', 'message': 'No products found matching the prediction.'}), 200
+
+        # Format hasil pencarian
+        products_data = [
+            {
+                'id': product.id,
+                'title': product.title,
+                'category_id': product.category_id,
+                'ingredients': product.ingredients,
+                'steps': product.steps,
+                'carbohidrat': product.carbohidrat,
+                'protein': product.protein,
+                'fat': product.fat,
+                'description': product.description,
+                'images': product.images.decode('utf-8') if product.images else None  # Jika ingin mengubah binary ke string
+            }
+            for product in matched_products
+        ]
+
+        # Berikan hasil pencarian ke Flutter
+        return jsonify({'status': 'success', 'prediction': result, 'products': products_data}), 200
+
+    except Exception as e:
+        logger.error(f"Internal Server Error: {str(e)}")
+        return jsonify({'status': 'error', 'message': f'Internal Server Error: {str(e)}'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
