@@ -111,6 +111,20 @@ html {
     border: #445B4B;
 }
 
+.btn-primary:hover{
+    background-color: #445B4B;
+}
+
+.btn-outline-secondary{
+    background-color: #445B4B;
+    color: #fff;
+}
+
+.btn-outline-secondary:hover{
+    background-color: #fff;
+    color: #445B4B;
+}
+
 /* Chatbot Popup */
 .chatbot-popup {
     position: fixed;

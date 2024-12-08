@@ -12,7 +12,7 @@
                     class="highlight">kebutuhan diet Anda.</span></h1>
             <div class="input-group mt-3" style="max-width: 400px;">
                 <input type="text" class="form-control" placeholder="Search your product">
-                <button class="btn btn-outline-secondary" style="background-color: white;">
+                <button class="btn btn-outline-secondary" style="background-color: white; color: grey;">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -28,21 +28,21 @@
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="feature-card">
-                    <i class="fas fa-utensils fa-2x mb-3"></i>
+                    <i class="fas fa-utensils fa-2x mb-3" style="color: #445B4B;"></i>
                     <h5>Rekomendasi Masakan</h5>
                     <p>Kami memberikan rekomendasi makanan sesuai dengan kebutuhan kalori Anda.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="feature-card">
-                    <i class="fas fa-comments fa-2x mb-3"></i>
+                    <i class="fas fa-comments fa-2x mb-3" style="color: #445B4B;"></i>
                     <h5>Chatbot Interaktif</h5>
                     <p>Kami memberikan rekomendasi makanan sesuai dengan kebutuhan kalori Anda.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="feature-card">
-                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <i class="fas fa-info-circle fa-2x mb-3" style="color: #445B4B"></i>
                     <h5>Informasi Diet</h5>
                     <p>Informasi lengkap mengenai diet yang dapat membantu Anda mencapai tujuan.</p>
                 </div>
@@ -55,12 +55,19 @@
         <div class="container">
             <h2 class="text-center">Gallery Resep Masakan</h2>
             <div class="d-flex justify-content-center mt-4 mb-3">
-                <a href="{{ url_for('categoryproduk', category='semua') }}#gallery-section" class="btn btn-outline-secondary mx-1">Semua</a>
-                <a href="{{ url_for('categoryproduk', category='dietnormal') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Normal</a>
-                <a href="{{ url_for('categoryproduk', category='dietBerat') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Berat Badan</a>
-                <a href="{{ url_for('categoryproduk', category='dietSport') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Sport</a>
-                <a href="{{ url_for('categoryproduk', category='dietKhusus') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet Penyakit</a>
-                <a href="{{ url_for('categoryproduk', category='diet2Nyawa') }}#gallery-section" class="btn btn-outline-secondary mx-1">Diet 2 Nyawa</a>
+                <!-- Button untuk kategori -->
+                <a href="{{ url_for('categoryproduk', category='semua', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Semua</a>
+                <a href="{{ url_for('categoryproduk', category='dietnormal', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Diet Normal</a>
+                <a href="{{ url_for('categoryproduk', category='dietBerat', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Diet Berat Badan</a>
+                <a href="{{ url_for('categoryproduk', category='dietSport', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Diet Sport</a>
+                <a href="{{ url_for('categoryproduk', category='dietKhusus', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Diet Penyakit</a>
+                <a href="{{ url_for('categoryproduk', category='diet2Nyawa', limit=8) }}#gallery-section"
+                    class="btn btn-outline-secondary mx-1">Diet 2 Nyawa</a>
             </div>
             <div class="row g-4">
                 <!-- Gallery Items -->
@@ -84,7 +91,9 @@
                 {% endfor %}
             </div>
             <div class="text-center mt-4">
-                <button class="btn btn-primary">Lihat Semua</button>
+                <!-- Button Lihat Semua -->
+                <a href="{{ url_for('categoryproduk', category=selected_category, limit=0) }}#gallery-section"
+                    class="btn btn-primary">Lihat Semua</a>
             </div>
         </div>
     </section>
@@ -114,15 +123,27 @@
             <div class="col-md-4">
                 <div class="topic-card">
                     <h5>Diet Penyakit (Diabetes)</h5>
-                    <p>Diet ini bertujuan untuk menurunkan berat badan.</p>
+                    <p>Diet ini bertujuan untuk seseorang yang mengalami penyakit diabetes</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="topic-card">
                     <h5>Diet 2 Nyawa (Ibu Hamil)</h5>
-                    <p>Diet ini bertujuan untuk menurunkan berat badan.</p>
+                    <p>Bertujuan untuk ibu hamil yang mempunyai berat badan yang berlebihan</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Announcement Section -->
+    <section class="container my-5">
+        <div class="announcement-card text-center py-4">
+            <h2 class="mb-3">Aplikasi Resmi Kami Telah Hadir!</h2>
+            <p>Unduh aplikasi kami sekarang di App Store dan nikmati kemudahan mengakses informasi dan layanan di ponsel
+                Anda</p>
+            <a href="https://play.google.com" target="_blank">
+                <div class="btn btn-primary">Unduh di Play Store</div>
+            </a>
         </div>
     </section>
 
@@ -169,6 +190,7 @@
                 <i class="fas fa-comment-dots fa-lg"></i>
             </button>
         </div>
+
 
         <!-- Chatbot Popup -->
         <div id="chatbot-popup" class="chatbot-popup" style="display: none;">
