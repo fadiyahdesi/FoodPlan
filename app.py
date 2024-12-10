@@ -1,29 +1,36 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-from controllers.mobile.Produk import prodMobile
+from controllers.PasswordController import forgot_password, resend_otp, reset_password, verify_otp
+from controllers.ValidasiController import validasi
+from controllers.mobile.Produk import getUserAndProduk
 from controllers.mobile.DeteksiController import predict
-from models.connectDB import db, Product, Role, User  # Import db from models.py, but after db is defined
-from langchain_community.document_loaders import PyPDFLoader
+from controllers.mobile.Users import gantiavatar, update_profileAll, userProfile
+from controllers.mobile.planning import getPlanning
+from models.connectDB import db, Product
 from controllers.ProductController import products
 from controllers.ChatController import ChatController
 from sqlalchemy import func
-from sqlalchemy.orm import load_only
-from controllers.LoginController import loginMobile
+from controllers.AuthController import loginMobile, registerMobile
 from controllers.AdminController import UserList, create_product, dashboard, delete_product, loginAdmin, produkAdmin, update_product
 from controllers.ResepController import resep
 from controllers.AdminController import add_user, edit_user, delete_user
 import base64  # <-- Tambahkan baris ini untuk mengimpor base64
 import logging
+from authlib.integrations.flask_client import OAuth
+from services.auth_service import AuthService
+from services.middleware import token_required
 
 
 app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/foodplan"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)  # Initialize the SQLAlchemy instance with the app
 
 chat_controller = ChatController(app, api_key="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", pdf_path="data/chatbot.pdf")
 app.secret_key = 'foodplan_123'
+
 # Konfigurasi logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -31,10 +38,6 @@ logger = logging.getLogger(__name__)
 @app.get("/")
 def product_list():
     return products()
-
-@app.route('/login', methods=['POST'])
-def login_page():
-    return loginMobile()
 
 # Define route to get chatbot response
 @app.route('/get_response', methods=['POST'])
@@ -98,10 +101,6 @@ def ListUser():
 @app.route('/resep')
 def reseps():
     return resep()
-
-@app.route("/produk-page", methods=['GET'])
-def produk_page():
-    return prodMobile()
 
 # Admin routes
 @app.route('/admin/user/tambah', methods=['GET', 'POST'])
@@ -248,58 +247,92 @@ def predict_endpoint():
         logger.info(f"Request received: {request.method} {request.url}")
         
         # Cek apakah file ada dalam request
-        if 'file' not in request.files:
-            logger.error("No file part in the request.")
-            return jsonify({'status': 'error', 'message': 'No file part in the request.'}), 400
+        if 'files' not in request.files:
+            logger.error("No files part in the request.")
+            return jsonify({'status': 'error', 'message': 'No files part in the request.'}), 400
 
-        file = request.files['file']
-        if file.filename == '':
-            logger.error("No selected file.")
-            return jsonify({'status': 'error', 'message': 'No selected file.'}), 400
+        files = request.files.getlist('files')  # Ambil semua file
+        if not files:
+            logger.error("No files uploaded.")
+            return jsonify({'status': 'error', 'message': 'No files uploaded.'}), 400
 
-        logger.info(f"File received: {file.filename}")
+        logger.info(f"{len(files)} files received.")
         
         # Panggil fungsi prediksi
-        result = predict(file)  # Fungsi predict
-        logger.info(f"Prediction result: {result}")
+        results = predict(files)  # Panggil fungsi baru
+        logger.info(f"Prediction results: {results}")
 
-        # Jika ada error di predict
-        if result.startswith("Error"):
-            return jsonify({'status': 'error', 'message': result}), 400
-
-        # Query produk yang cocok, tanpa kolom created_at dan updated_at
-        matched_products = Product.query.options(
-            load_only(Product.id, Product.title, Product.ingredients, Product.steps, 
-                      Product.carbohidrat, Product.protein, Product.fat, Product.description, 
-                      Product.images, Product.category_id)
-        ).filter(Product.ingredients.like(f"%{result}%")).all()
-
-        if not matched_products:
-            return jsonify({'status': 'success', 'message': 'No products found matching the prediction.'}), 200
-
-        # Format hasil pencarian
-        products_data = [
-            {
-                'id': product.id,
-                'title': product.title,
-                'category_id': product.category_id,
-                'ingredients': product.ingredients,
-                'steps': product.steps,
-                'carbohidrat': product.carbohidrat,
-                'protein': product.protein,
-                'fat': product.fat,
-                'description': product.description,
-                'images': product.images.decode('utf-8') if product.images else None  # Jika ingin mengubah binary ke string
-            }
-            for product in matched_products
-        ]
-
-        # Berikan hasil pencarian ke Flutter
-        return jsonify({'status': 'success', 'prediction': result, 'products': products_data}), 200
+        # Format hasil
+        return jsonify({'status': 'success', 'results': results}), 200
 
     except Exception as e:
         logger.error(f"Internal Server Error: {str(e)}")
         return jsonify({'status': 'error', 'message': f'Internal Server Error: {str(e)}'}), 500
+
+
+
+#================================================================================================================
+# Mobile Server 
+#================================================================================================================
+
+@app.route('/login', methods=['POST'])
+def login_page():
+    return loginMobile()
+
+@app.route('/register', methods=['POST'])
+def register_user():
+    return registerMobile()
+
+@app.route('/forgot-password', methods=['POST'])
+def forgotPassword():
+    return forgot_password()
+
+@app.route('/verify-otp', methods=['POST'])
+def verifyToken():
+    return verify_otp()
+
+@app.route('/reset-password', methods=['POST'])
+def resetPassword():
+    return reset_password()
+
+@app.route('/resend-otp', methods=['POST'])
+def resendOtp():
+    return resend_otp()
+
+@app.route('/validate', methods=['POST'])
+@token_required
+def validasi_user(users_id):
+    # print(f"users_id yang diterima di validasi_user: {users_id}")
+    return validasi(users_id)
+
+
+@app.route("/beranda", methods=['GET'])
+@token_required
+def produk_page(users_id):
+    return getUserAndProduk(users_id)
+    # print(f"users_id yang diterima di produk_page: {users_id}")
+    # return prodMobile(users_id)
+
+@app.route('/user-profile', methods=['GET'])
+@token_required
+def profileUser(users_id):
+    print(f"users_id yang diterima di user-beranda: {users_id}")
+    return userProfile(users_id)
+
+@app.route('/upload-profile-image', methods=['POST'])
+@token_required
+def uploadProfileImage(users_id):
+    return gantiavatar(users_id)
+
+@app.route('/update-profile', methods=['PUT'])
+@token_required
+def updateProfile(users_id):
+    return update_profileAll(users_id)
+
+@app.route('/planning-page', methods=['GET'])
+@token_required
+def planningPage(users_id):
+    return getPlanning(users_id)
 
 if __name__ == "__main__":
     app.run(debug=True)

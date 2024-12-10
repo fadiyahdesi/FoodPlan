@@ -20,7 +20,6 @@ def products():
 
     products_with_images = []
     for product in products:
-        print(f"ID: {product.id}, Title: {product.title}, Description: {product.description}")  # Debugging
         
         if product.images:
             # Deteksi format gambar

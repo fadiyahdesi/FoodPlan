@@ -58,37 +58,34 @@ def predict_image(img_path):
         raise ValueError(f"Error during prediction: {str(e)}")
 
 # Function to handle prediction from Flask endpoint
-def predict():
+def predict(files):
     try:
-        # Check if the file is in the request
-        if 'file' not in request.files:
-            return 'Error: No file part in the request.'
-        file = request.files['file']
-        if file.filename == '':
-            return 'Error: No selected file.'
-
-        # Validasi ekstensi file
         ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-        if not ('.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS):
-            return 'Error: Invalid file type. Please upload a PNG, JPG, or JPEG file.'
+        results = []
 
-        # Make sure the 'uploads' directory exists
-        upload_folder = 'static/uploads'
-        os.makedirs(upload_folder, exist_ok=True)  # Create the uploads folder if it doesn't exist
+        # Validasi dan proses setiap file
+        for file in files:
+            if not ('.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS):
+                results.append({'filename': file.filename, 'error': 'Invalid file type. Please upload PNG, JPG, or JPEG.'})
+                continue
 
-        # Save the uploaded image temporarily
-        img_path = os.path.join(upload_folder, file.filename)
-        file.save(img_path)
-        logger.info(f"Image saved at {img_path}")
+            # Simpan file sementara
+            upload_folder = 'static/uploads'
+            os.makedirs(upload_folder, exist_ok=True)
+            img_path = os.path.join(upload_folder, file.filename)
+            file.save(img_path)
+            logger.info(f"Image saved at {img_path}")
 
-        # Predict the class of the uploaded image
-        predicted_class = predict_image(img_path)
+            try:
+                # Prediksi kelas gambar
+                predicted_class = predict_image(img_path)
+                results.append({'filename': file.filename, 'prediction': predicted_class})
+            except Exception as e:
+                results.append({'filename': file.filename, 'error': str(e)})
+            finally:
+                os.remove(img_path)  # Hapus file setelah diproses
 
-        # Optionally delete the uploaded file after processing
-        os.remove(img_path)
-
-        # Return the result with the class name
-        return predicted_class
+        return results
     except Exception as e:
         logger.error(f"Error: {str(e)}")
-        return f"Error: {str(e)}"
+        raise ValueError(f"Error: {str(e)}")
