@@ -13,6 +13,58 @@ def detect_image_format(image_data):
         return "webp"
     else:
         return "jpeg"
+    
+def get_recommended_foods(category_id):
+    recommended_foods = {
+        "Pagi": [],
+        "Siang": [],
+        "Malam": []
+    }
+
+    if category_id:
+        products = Product.query.filter_by(category_id=category_id).all()
+        for product in products:
+            product_image = None
+            if product.images:
+                try:
+                    image_format = detect_image_format(product.images)
+                    image_data = base64.b64encode(product.images).decode('utf-8')
+                    product_image = f"data:image/{image_format};base64,{image_data}"
+                except Exception:
+                    product_image = None
+
+            product_data = {
+                'id': product.id,
+                'title': product.title,
+                'category_id': product.category_id,
+                'category_name': product.category.name if product.category else None,
+                'description': product.description,
+                'ingredients': product.ingredients,
+                'steps': product.steps,
+                'carbohidrat': product.carbohidrat,
+                'protein': product.protein,
+                'fat': product.fat,
+                'images_src': product_image,
+            }
+
+            # Tentukan waktu makan berdasarkan deskripsi
+            if len(recommended_foods["Pagi"]) == 0 and (
+                "sarapan" in product.description.lower() or "pagi" in product.description.lower() or "sup" in product.description.lower() or "smoothies" in product.description.lower() or "oatmeal" in product.description.lower()):
+                if product.id not in [x['id'] for x in recommended_foods["Pagi"]]:
+                    recommended_foods["Pagi"].append(product_data)
+
+            if len(recommended_foods["Siang"]) == 0 and (
+                "makan siang" in product.description.lower() or "siang" in product.description.lower() or "daging" in product.description.lower() or "tempe" in product.description.lower() or "tahu" in product.description.lower()):
+                if product.id not in [x['id'] for x in recommended_foods["Siang"]]:
+                    recommended_foods["Siang"].append(product_data)
+
+            if len(recommended_foods["Malam"]) == 0 and (
+                "makan malam" in product.description.lower() or "malam" in product.description.lower() or "protein tinggi" in product.description.lower() or "salmon" in product.description.lower() or "telur" in product.description.lower() or "lemak rendah" in product.description.lower()):
+                if product.id not in [x['id'] for x in recommended_foods["Malam"]]:
+                    recommended_foods["Malam"].append(product_data)
+
+    return recommended_foods
+
 
 def getPlanning(users_id):
     try:
@@ -42,50 +94,8 @@ def getPlanning(users_id):
                             'aktivitas': aktivitas.aktivitas,
                         })
                 
-                # Rekomendasi makanan berdasarkan category_id
-                recommended_foods = {
-                    "Pagi": [],
-                    "Siang": [],
-                    "Malam": []
-                }
-
-                if plan.category_id:
-                    products = Product.query.filter_by(category_id=plan.category_id).all()
-                    for product in products:
-                        product_image = None
-                        if product.images:
-                            try:
-                                image_format = detect_image_format(product.images)
-                                image_data = base64.b64encode(product.images).decode('utf-8')
-                                product_image = f"data:image/{image_format};base64,{image_data}"
-                            except Exception:
-                                product_image = None
-
-                        product_data = {
-                            'id': product.id,
-                            'title': product.title,
-                            'category_id': product.category_id,
-                            'category_name': product.category.name if product.category else None,
-                            'description': product.description,
-                            'ingredients': product.ingredients,  # Tambahan ingredients
-                            'steps': product.steps,  # Tambahan steps
-                            'carbohidrat': product.carbohidrat,  # Tambahan carbohidrat
-                            'protein': product.protein,  # Tambahan protein
-                            'fat': product.fat,  # Tambahan fat
-                            'images_src': product_image,
-                        }
-
-                        # Tentukan waktu makan berdasarkan deskripsi
-                        if "sarapan" in product.description.lower() or "pagi" in product.description.lower() or "buah" in product.description.lower() or "sayur" in product.description.lower():
-                            if product_data not in recommended_foods["Pagi"]:
-                                recommended_foods["Pagi"].append(product_data)
-                        if "makan siang" in product.description.lower() or "siang" in product.description.lower() or "daging" in product.description.lower() or "oatmeal" in product.description.lower():
-                            if product_data not in recommended_foods["Siang"]:
-                                recommended_foods["Siang"].append(product_data)
-                        if "makan malam" in product.description.lower() or "malam" in product.description.lower() or "protein tinggi" in product.description.lower() or "lemak rendah" in product.description.lower() or "daging" in product.description.lower():
-                            if product_data not in recommended_foods["Malam"]:
-                                recommended_foods["Malam"].append(product_data)
-
+                # Panggil fungsi untuk mendapatkan rekomendasi makanan
+                recommended_foods = get_recommended_foods(plan.category_id)
 
                 # Ambil data dari tabel DetailPlanning yang sesuai
                 details = []
@@ -115,3 +125,4 @@ def getPlanning(users_id):
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
