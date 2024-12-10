@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, session, redirect, url_for
 from flask_cors import CORS
 from controllers.PasswordController import forgot_password, resend_otp, reset_password, verify_otp
 from controllers.ValidasiController import validasi
@@ -47,6 +47,11 @@ def get_chat_response():
 @app.route('/admin', methods=['GET', 'POST'])
 def login():
     return loginAdmin()
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/admin/dashboard')
 def dashboardAdmin():
@@ -130,20 +135,31 @@ def detect_image_format(image_data):
 def categoryproduk():
     # Ambil kategori yang dipilih dari request (default ke 'semua')
     selected_category = request.args.get('category', 'semua')
+    limit = request.args.get('limit', 8)  # Ambil parameter limit (default 8)
+    try:
+        limit = int(limit)  # Konversi limit ke integer
+    except ValueError:
+        limit = 8  # Default ke 8 jika nilai limit tidak valid
 
-    # Ambil produk sesuai kategori yang dipilih
+    # Query produk berdasarkan kategori yang dipilih
+    query = db.select(Product)
     if selected_category == 'dietnormal':
-        products = db.session.execute(db.select(Product).filter(Product.category_id == 1)).scalars().all()
+        query = query.filter(Product.category_id == 1)
     elif selected_category == 'dietBerat':
-        products = db.session.execute(db.select(Product).filter(Product.category_id == 2)).scalars().all()
+        query = query.filter(Product.category_id == 2)
     elif selected_category == 'dietSport':
-        products = db.session.execute(db.select(Product).filter(Product.category_id == 3)).scalars().all()
+        query = query.filter(Product.category_id == 3)
     elif selected_category == 'dietKhusus':
-        products = db.session.execute(db.select(Product).filter(Product.category_id == 4)).scalars().all()
+        query = query.filter(Product.category_id == 4)
     elif selected_category == 'diet2Nyawa':
-        products = db.session.execute(db.select(Product).filter(Product.category_id == 5)).scalars().all()
-    else:
-        products = db.session.execute(db.select(Product)).scalars().all()
+        query = query.filter(Product.category_id == 5)
+
+    # Terapkan limit jika diperlukan
+    if limit > 0:
+        query = query.limit(limit)
+
+    # Eksekusi query
+    products = db.session.execute(query).scalars().all()
 
     # Tambahkan pemrosesan gambar untuk setiap produk
     products_with_images = []
@@ -166,7 +182,7 @@ def categoryproduk():
         })
 
     # Render template dengan data produk dan gambar
-    return render_template('user/index.html', products=products_with_images)
+    return render_template('user/index.html', products=products_with_images, selected_category=selected_category)
 
 @app.route('/categoryresep')
 def categoryresep():
